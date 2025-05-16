@@ -1,0 +1,55 @@
+package battaglia.navale.web.battaglia_navale_web.controller;
+
+import battaglia.navale.web.battaglia_navale_web.model.Field;
+import battaglia.navale.web.battaglia_navale_web.model.Nave;
+import battaglia.navale.web.battaglia_navale_web.model.Punto;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+@RestController
+@RequestMapping("/api")
+public class FieldController {
+
+    private Field playerField = new Field();
+    private Field computerField = new Field();
+    private boolean gameStarted = false;
+
+    @GetMapping("/popola-griglie")
+    public Map<String, ArrayList<Integer>> popolaGriglie() {
+        if (!gameStarted) {
+            playerField.piazzaNavi();
+            computerField.piazzaNavi();
+            gameStarted = true;
+        }
+
+        Map<String, ArrayList<Integer>> griglie = new HashMap<>();
+        griglie.put("player", convertiCoordinate(playerField));
+        // NON aggiungiamo le navi del computer per non mostrarle al giocatore
+        return griglie;
+    }
+
+    @PutMapping("/attacca/{index}")
+    public Map<String, String> attacca(@PathVariable int index) {
+        int x = index % 10;
+        int y = index / 10;
+
+        String esitoGiocatore = computerField.attacca(x, y);
+        String esitoComputer = playerField.attaccoComputer();
+
+        Map<String, String> risultato = new HashMap<>();
+        risultato.put("giocatore", esitoGiocatore);
+        risultato.put("computer", esitoComputer);
+        return risultato;
+    }
+
+    private ArrayList<Integer> convertiCoordinate(Field field) {
+        ArrayList<Integer> posizioni = new ArrayList<>();
+        for (Nave nave : field.navi) {
+            for (Punto p : nave.punti) {
+                posizioni.add(p.y * 10 + p.x);
+            }
+        }
+        return posizioni;
+    }
+}
