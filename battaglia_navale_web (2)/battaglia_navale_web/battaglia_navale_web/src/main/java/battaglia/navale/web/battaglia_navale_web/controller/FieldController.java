@@ -25,7 +25,6 @@ public class FieldController {
 
         Map<String, ArrayList<Integer>> griglie = new HashMap<>();
         griglie.put("player", convertiCoordinate(playerField));
-        // NON aggiungiamo le navi del computer per non mostrarle al giocatore
         return griglie;
     }
 
@@ -35,11 +34,15 @@ public class FieldController {
         int y = index / 10;
 
         String esitoGiocatore = computerField.attacca(x, y);
-        String esitoComputer = playerField.attaccoComputer();
 
         Map<String, String> risultato = new HashMap<>();
         risultato.put("giocatore", esitoGiocatore);
-        risultato.put("computer", esitoComputer);
+        return risultato;
+    }
+
+    @PutMapping("/attacca-computer")
+    public Map<String, Object> attaccaComputer() {
+        Map<String, Object> risultato = computerField.attaccoComputer();
         return risultato;
     }
 

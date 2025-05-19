@@ -1,6 +1,8 @@
 package battaglia.navale.web.battaglia_navale_web.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Field {
@@ -27,7 +29,7 @@ public class Field {
     }
 
     public ArrayList<Nave> piazzaNavi() {
-        int[] lunghezze = {4, 3, 3, 3, 2, 2, 2, 1, 1};
+        int[] lunghezze = { 4, 3, 3, 3, 2, 2, 2, 1, 1 };
 
         for (int lunghezza : lunghezze) {
             boolean posizionata = false;
@@ -72,7 +74,7 @@ public class Field {
         return "Hai colpito acqua";
     }
 
-    public String attaccoComputer() {
+    public Map<String, Object> attaccoComputer() {
         int x, y;
         Punto attacco;
         do {
@@ -81,6 +83,15 @@ public class Field {
             attacco = new Punto(x, y);
         } while (attacchi.contains(attacco));
 
-        return attacca(x, y);
+        String risultato = attacca(x, y);
+
+        // Return both the result and the attacked coordinates
+        Map<String, Object> result = new HashMap<>();
+        result.put("x", x);
+        result.put("y", y);
+        result.put("risultato", risultato);
+
+        return result;
     }
+
 }
