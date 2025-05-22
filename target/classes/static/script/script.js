@@ -16,28 +16,35 @@ function createEmptyGrid(containerId) {
 }
 
 function markCell(cell, result) {
-    cell.classList.add('colpita');
-    if (result.includes("colpita") || result.includes("affondata")) {
-        cell.style.backgroundColor = 'red';
-    } else {
-        cell.style.backgroundColor = 'lightgrey';
+    // Prima rimuoviamo tutte le classi di stato possibili
+    cell.classList.remove('colpita', 'miss', 'affondata');
+
+    const res = result.toLowerCase();
+
+    if (res.includes("acqua")) {
+        cell.classList.add('miss');
+    } else if (res.includes("affondata")) {
+        cell.classList.add('affondata');
+    } else if (res.includes("colpita")) {
+        cell.classList.add('colpita');
     }
+    cell.classList.add('disabled');
 }
 
-// ==== NAVI ====
+
+
 function piazzaNaviGiocatore() {
     fetch('/api/popola-griglie')
-        .then(response => response.json())
-        .then(data => {
+    .then(response => response.json())
+    .then(data => {
             data.player.forEach(index => {
                 document.querySelector(`#${PLAYER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
             });
             document.getElementById("pulsante-piazza-navi").disabled = true;
-        })
-        .catch(() => alert('Errore nel caricamento delle navi!'));
+        }).catch(() => alert('Errore nel caricamento delle navi!'));
 }
 
-// ==== RESET ====
+
 function resetGriglie() {
     fetch('/api/reset', { method: 'POST' })
         .then(() => {
@@ -45,18 +52,18 @@ function resetGriglie() {
             createEmptyGrid(COMPUTER_GRID_ID);
             setupComputerGridClickHandler();
             document.getElementById("pulsante-piazza-navi").disabled = false;
-            aggiornaMessaggi('', ''); // pulisce i messaggi
+            aggiornaMessaggi('', '');
         })
         .catch(() => aggiornaMessaggi('', "Errore durante il reset!"));
 }
 
-// ==== ATTACCHI ====
+
 function attaccoGiocatore(index, cellComputer) {
     fetch(`/api/attacca/${index}`, { method: 'PUT' })
         .then(response => response.json())
         .then(data => {
             markCell(cellComputer, data.giocatore);
-            aggiornaMessaggi(`Giocatore: ${data.giocatore}`, ''); // Solo messaggio giocatore per ora
+            aggiornaMessaggi(`Giocatore: ${data.giocatore}`, '');
 
             if (data.fine) {
                 aggiornaMessaggi(`Giocatore: ${data.giocatore}`, data.fine);
@@ -78,7 +85,7 @@ function attaccoComputer() {
             markCell(cell, risultato);
 
             aggiornaMessaggi(
-                document.getElementById('player-message').textContent, // mantiene messaggio giocatore
+                document.getElementById('player-message').textContent,
                 `Computer: ${risultato}`
             );
 
@@ -92,18 +99,18 @@ function attaccoComputer() {
         .catch(() => aggiornaMessaggi('', "Errore nell'attacco del computer!"));
 }
 
-// ==== EVENTI ====
+
 function setupComputerGridClickHandler() {
     const grid = document.getElementById(COMPUTER_GRID_ID);
     const newGrid = grid.cloneNode(true);
-    grid.replaceWith(newGrid); // Rimuove tutti i vecchi eventi
+    grid.replaceWith(newGrid);
     newGrid.addEventListener('click', function (e) {
         const target = e.target;
         if (!target.classList.contains('cell')) return;
 
-        const index = parseInt(target.dataset.index);
-        if (target.classList.contains('colpita')) return;
+        if(target.classList.contains('disabled')) return;
 
+        const index = parseInt(target.dataset.index);
         attaccoGiocatore(index, target);
     });
 }
@@ -112,7 +119,7 @@ function aggiornaMessaggi(messaggioGiocatore, messaggioComputer) {
     document.getElementById('player-message').textContent = messaggioGiocatore || "";
     document.getElementById('computer-message').textContent = messaggioComputer || "";
 }
-// ==== INIZIALIZZAZIONE ====
+
 document.addEventListener("DOMContentLoaded", () => {
     createEmptyGrid(PLAYER_GRID_ID);
     createEmptyGrid(COMPUTER_GRID_ID);

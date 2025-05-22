@@ -48,7 +48,7 @@ public class FieldController {
     public Map<String, Object> attaccaComputer() {
         Map<String, Object> risultato = playerField.attaccoComputer();
         if (playerField.tutteAffondate()) {
-            risultato.put("Fine", "Hai perso.");
+            risultato.put("fine", "Hai perso.");
         }
         return risultato;
     }

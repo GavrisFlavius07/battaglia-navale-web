@@ -1,21 +1,63 @@
+body {
+  background-color: #121212;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
 .grid {
-    display: grid;
-    grid-template-columns: repeat(10, 30px);
-    margin: 20px;
+  display: grid;
+  grid-template-columns: repeat(10, 32px);
+  gap: 2px;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .cell {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ccc;
-    text-align: center;
-    line-height: 30px;
+  width: 32px;
+  height: 32px;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  transition: background-color 0.3s;
 }
 
-.ship {
-    background-color: lightblue;
-}
 .cell:hover {
-    outline: 2px solid black;
-    cursor: pointer;
+  outline: 2px solid #888;
+  cursor: pointer;
+}
+
+/* Navi piazzate dal giocatore */
+.ship {
+  background-color: #4fc3f7;
+}
+
+/* Colpo mancato: acqua */
+.cell.miss {
+  background-color: #424242 !important;
+}
+
+/* Nave colpita */
+.cell.colpita {
+  background-color: #e53935 !important;
+}
+
+/* Nave affondata */
+.cell.affondata {
+  background-color: #c62828 !important;
+}
+
+/* Pulsanti */
+.btn-outline-info,
+.btn-outline-danger {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Messaggi */
+#computer-message, #player-message {
+  min-height: 24px;
+  font-size: 1rem;
+}
+.cell.disabled {
+  cursor: not-allowed;
+  pointer-events: none; /* Impedisce ogni interazione */
 }
