@@ -34,15 +34,22 @@ public class FieldController {
         int y = index / 10;
 
         String esitoGiocatore = computerField.attacca(x, y);
-
         Map<String, String> risultato = new HashMap<>();
         risultato.put("giocatore", esitoGiocatore);
+
+        if (computerField.tutteAffondate()) {
+            risultato.put("fine", "Hai vinto!");
+        }
+
         return risultato;
     }
 
     @PutMapping("/attacca-computer")
     public Map<String, Object> attaccaComputer() {
-        Map<String, Object> risultato = computerField.attaccoComputer();
+        Map<String, Object> risultato = playerField.attaccoComputer();
+        if (playerField.tutteAffondate()) {
+            risultato.put("Fine", "Hai perso.");
+        }
         return risultato;
     }
 

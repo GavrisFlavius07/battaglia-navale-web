@@ -1,68 +1,80 @@
-$(document).ready(function () {
-    function createEmptyGrid(container) {
+document.addEventListener("DOMContentLoaded", function () {
+    function createEmptyGrid(containerId) {
+        const container = document.getElementById(containerId);
         for (let i = 0; i < 100; i++) {
-            $(container).append('<div class="cell" data-index="' + i + '"></div>');
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            container.appendChild(cell);
         }
     }
 
-    createEmptyGrid('#player-grid');
-    createEmptyGrid('#computer-grid');
+    createEmptyGrid('player-grid');
+    createEmptyGrid('computer-grid');
 
-    $.ajax({
-        url: '/api/popola-griglie',
-        method: 'GET',
-        success: function (response) {
-            response.player.forEach(index => {
-                $('#player-grid .cell').eq(index).addClass('ship');
+    // Popola le navi del giocatore
+    fetch('/api/popola-griglie')
+        .then(response => response.json())
+        .then(data => {
+            data.player.forEach(index => {
+                document.querySelector(`#player-grid .cell:nth-child(${index + 1})`).classList.add('ship');
             });
-        },
-        error: function () {
-            alert('Errore nel caricamento delle griglie!');
-        }
-    });
+        })
+        .catch(() => alert('Errore nel caricamento delle griglie!'));
 
-    $('#computer-grid').on('click', '.cell', function () {
-    const index = $(this).data('index');
+    // Click sul campo del computer
+    document.getElementById('computer-grid').addEventListener('click', function (e) {
+        const target = e.target;
+        if (!target.classList.contains('cell')) return;
 
-    $.ajax({
-        url: '/api/attacca/' + index,
-        method: 'PUT',
-        success: function (response) {
-            alert("Giocatore: " + response.giocatore + "\nComputer: " + response.computer);
-            
-            const cellComputer = $('#computer-grid .cell').eq(index);
-            if (response.giocatore.includes("colpita") || response.giocatore.includes("affondata")) {
-                cellComputer.css('background-color', 'red');
-            } else {
-                cellComputer.css('background-color', 'lightgrey');
-            }
+        const index = parseInt(target.dataset.index);
+        const cellComputer = target;
 
-            $.ajax({
-                url: '/api/attacca-computer',
-                method: 'PUT',
-                success: function (computerAttackResponse) {
-                    const computerX = computerAttackResponse.x;
-                    const computerY = computerAttackResponse.y;
-                    const risultato = computerAttackResponse.risultato;
+        // Evita colpi ripetuti
+        if (cellComputer.classList.contains('colpita')) return;
 
-                    const cellPlayer = $('#player-grid .cell').eq(computerY * 10 + computerX);
-                    if (risultato.includes("colpita") || risultato.includes("affondata")) {
-                        cellPlayer.css('background-color', 'red');
-                    } else {
-                        cellPlayer.css('background-color', 'lightgrey');
-                    }
-                    
-                    alert("L'attacco del computer: " + risultato);
-                },
-                error: function () {
-                    alert('Errore nell\'attacco del computer!');
+        fetch(`/api/attacca/${index}`, { method: 'PUT' })
+            .then(response => response.json())
+            .then(data => {
+                cellComputer.classList.add('colpita');
+
+                if (data.giocatore.includes("colpita") || data.giocatore.includes("affondata")) {
+                    cellComputer.style.backgroundColor = 'red';
+                } else {
+                    cellComputer.style.backgroundColor = 'lightgrey';
                 }
-            });
-        },
-        error: function () {
-            alert('Errore nell\'attacco!');
-        }
-    });
-});
 
+                alert("Giocatore: " + data.giocatore);
+
+                if (data.fine) {
+                    alert(data.fine);
+                    document.getElementById('computer-grid').replaceWith(document.getElementById('computer-grid').cloneNode(true));
+                    return;
+                }
+
+                // Attacco del computer
+                fetch('/api/attacca-computer', { method: 'PUT' })
+                    .then(response => response.json())
+                    .then(computerData => {
+                        const { x, y, risultato, fine } = computerData;
+                        const indexPlayer = y * 10 + x;
+                        const cellPlayer = document.querySelector(`#player-grid .cell:nth-child(${indexPlayer + 1})`);
+
+                        if (risultato.includes("colpita") || risultato.includes("affondata")) {
+                            cellPlayer.style.backgroundColor = 'red';
+                        } else {
+                            cellPlayer.style.backgroundColor = 'lightgrey';
+                        }
+
+                        alert("L'attacco del computer: " + risultato);
+
+                        if (fine) {
+                            alert(fine);
+                            document.getElementById('computer-grid').replaceWith(document.getElementById('computer-grid').cloneNode(true));
+                        }
+                    })
+                    .catch(() => alert('Errore nell\'attacco del computer!'));
+            })
+            .catch(() => alert('Errore nell\'attacco!'));
+    });
 });

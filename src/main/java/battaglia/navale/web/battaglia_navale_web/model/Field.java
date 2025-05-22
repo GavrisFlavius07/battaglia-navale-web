@@ -85,7 +85,6 @@ public class Field {
 
         String risultato = attacca(x, y);
 
-        // Return both the result and the attacked coordinates
         Map<String, Object> result = new HashMap<>();
         result.put("x", x);
         result.put("y", y);
@@ -94,4 +93,8 @@ public class Field {
         return result;
     }
 
+    public boolean tutteAffondate() {
+        return navi.stream().allMatch(n -> n.affondata);
+    }
+    
 }
