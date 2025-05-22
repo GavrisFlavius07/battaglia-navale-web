@@ -62,4 +62,12 @@ public class FieldController {
         }
         return posizioni;
     }
+
+    @PostMapping("/reset")
+    public void reset() {
+        playerField = new Field();
+        computerField = new Field();
+        gameStarted = false;
+    }
+
 }

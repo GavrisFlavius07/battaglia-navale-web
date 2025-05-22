@@ -15,3 +15,7 @@
 .ship {
     background-color: lightblue;
 }
+.cell:hover {
+    outline: 2px solid black;
+    cursor: pointer;
+}

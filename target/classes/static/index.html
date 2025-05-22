@@ -14,17 +14,25 @@
   <h1 class="text-center">Battaglia Navale</h1>
   <div class="container text-center">
     <div class="row">
-      <div class="col-sm-6 col-md-4">
+      <div class="col-sm-4">
         <div>
-          <h2>Campo Giocatore</h2>
+          <h2 class="text-center">Campo Giocatore</h2>
           <div id="player-grid" class="grid"></div>
+          <div id="computer-message" class="text-center mt-2 fw-bold text-danger"></div>
         </div>
       </div>
-      <div class="col-sm-6 col-md-4">
+      <div class="col-sm-4 ">
+      </div>
+      <div class="col-sm-4 ">
         <div>
-          <h2>Campo Computer</h2>
+          <h2 class="text-center">Campo Computer</h2>
           <div id="computer-grid" class="grid"></div>
+          <div id="player-message" class="text-center mt-2 fw-bold text-primary"></div>
         </div>
+      </div>
+      <div class="text-center my-3 mx-auto">
+        <button id="pulsante-piazza-navi" class="btn btn-primary">Piazza le Navi</button>
+        <button id="pulsante-reset" class="btn btn-danger">Reset</button>
       </div>
     </div>
   </div>
