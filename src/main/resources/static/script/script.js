@@ -5,7 +5,7 @@ const COMPUTER_GRID_ID = 'computer-grid';
 
 function createEmptyGrid(containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ""; 
+    container.innerHTML = "";
 
     for (let i = 0; i < 100; i++) {
         const cell = document.createElement('div');
@@ -16,7 +16,6 @@ function createEmptyGrid(containerId) {
 }
 
 function markCell(cell, result) {
-    // Prima rimuoviamo tutte le classi di stato possibili
     cell.classList.remove('colpita', 'miss', 'affondata');
 
     const res = result.toLowerCase();
@@ -35,10 +34,13 @@ function markCell(cell, result) {
 
 function piazzaNaviGiocatore() {
     fetch('/api/popola-griglie')
-    .then(response => response.json())
-    .then(data => {
+        .then(response => response.json())
+        .then(data => {
             data.player.forEach(index => {
                 document.querySelector(`#${PLAYER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
+            /*data.computer.forEach(index => {
+                document.querySelector(`#${COMPUTER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
+                });*/
             });
             document.getElementById("pulsante-piazza-navi").disabled = true;
         }).catch(() => alert('Errore nel caricamento delle navi!'));
@@ -108,7 +110,7 @@ function setupComputerGridClickHandler() {
         const target = e.target;
         if (!target.classList.contains('cell')) return;
 
-        if(target.classList.contains('disabled')) return;
+        if (target.classList.contains('disabled')) return;
 
         const index = parseInt(target.dataset.index);
         attaccoGiocatore(index, target);
