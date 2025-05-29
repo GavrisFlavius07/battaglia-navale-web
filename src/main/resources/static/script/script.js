@@ -38,10 +38,11 @@ function piazzaNaviGiocatore() {
         .then(data => {
             data.player.forEach(index => {
                 document.querySelector(`#${PLAYER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
-            /*data.computer.forEach(index => {
-                document.querySelector(`#${COMPUTER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
-                });*/
             });
+            data.computer.forEach(index => {
+                document.querySelector(`#${COMPUTER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
+            });
+
             document.getElementById("pulsante-piazza-navi").disabled = true;
         }).catch(() => alert('Errore nel caricamento delle navi!'));
 }
