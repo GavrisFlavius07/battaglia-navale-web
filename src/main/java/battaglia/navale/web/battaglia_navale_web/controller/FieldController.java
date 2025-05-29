@@ -25,7 +25,7 @@ public class FieldController {
 
         Map<String, ArrayList<Integer>> griglie = new HashMap<>();
         griglie.put("player", convertiCoordinate(playerField));
-        griglie.put("computer", convertiCoordinate(computerField));
+        /*griglie.put("computer", convertiCoordinate(computerField));*/
         return griglie;
     }
 

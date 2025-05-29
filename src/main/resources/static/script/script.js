@@ -39,13 +39,27 @@ function piazzaNaviGiocatore() {
             data.player.forEach(index => {
                 document.querySelector(`#${PLAYER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
             });
-            data.computer.forEach(index => {
+            /*data.computer.forEach(index => {
                 document.querySelector(`#${COMPUTER_GRID_ID} .cell:nth-child(${index + 1})`).classList.add('ship');
-            });
+            });*/
 
+            abilitaCelleComputer(true);
+            setupComputerGridClickHandler();
             document.getElementById("pulsante-piazza-navi").disabled = true;
         }).catch(() => alert('Errore nel caricamento delle navi!'));
 }
+
+function abilitaCelleComputer(abilita) {
+    const celle = document.querySelectorAll(`#${COMPUTER_GRID_ID} .cell`);
+    celle.forEach(cell => {
+        if (abilita) {
+            cell.classList.remove('disabled');
+        } else {
+            cell.classList.add('disabled');
+        }
+    });
+}
+
 
 
 function resetGriglie() {
@@ -53,12 +67,14 @@ function resetGriglie() {
         .then(() => {
             createEmptyGrid(PLAYER_GRID_ID);
             createEmptyGrid(COMPUTER_GRID_ID);
+            abilitaCelleComputer(false); // Disabilita le celle finché non si piazzano le navi
             setupComputerGridClickHandler();
             document.getElementById("pulsante-piazza-navi").disabled = false;
             aggiornaMessaggi('', '');
         })
         .catch(() => aggiornaMessaggi('', "Errore durante il reset!"));
 }
+
 
 
 function attaccoGiocatore(index, cellComputer) {
@@ -126,8 +142,10 @@ function aggiornaMessaggi(messaggioGiocatore, messaggioComputer) {
 document.addEventListener("DOMContentLoaded", () => {
     createEmptyGrid(PLAYER_GRID_ID);
     createEmptyGrid(COMPUTER_GRID_ID);
+    abilitaCelleComputer(false);
     setupComputerGridClickHandler();
 
     document.getElementById("pulsante-piazza-navi").addEventListener("click", piazzaNaviGiocatore);
     document.getElementById("pulsante-reset").addEventListener("click", resetGriglie);
 });
+
